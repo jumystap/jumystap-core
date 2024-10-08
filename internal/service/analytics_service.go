@@ -40,6 +40,11 @@ func (s *AnalyticsService) GetAnalytics() (*model.Analytics, error) {
         return nil, err
     }
 
+    responsesCount, err := s.repo.GetCountOfResponses()
+    if err != nil {
+        return nil, err
+    }
+
     employeesRespondedCount, err := s.repo.GetCountOfEmployeesResponded()
     if err != nil {
         return nil, err
@@ -57,6 +62,7 @@ func (s *AnalyticsService) GetAnalytics() (*model.Analytics, error) {
     analytics.AnnouncementsCount = announcementsCount
     analytics.EmployeesRespondedCount = employeesRespondedCount
     analytics.CompaniesRespondedCount = companiesRespondedCount
+    analytics.ResponsesCount = responsesCount
 
     return analytics, nil
 }
