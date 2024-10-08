@@ -8,6 +8,8 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/jumystap/jumystap-core/internal/http/handler"
+	"github.com/jumystap/jumystap-core/internal/repository"
+	"github.com/jumystap/jumystap-core/internal/service"
 )
 
 type APIServer struct {
@@ -27,11 +29,13 @@ func (s *APIServer) Run() error {
 	router.Use(middleware.Logger)
 	router.Use(middleware.URLFormat)     
 
-    userHandler := handler.NewUserHandler()
+    analyticsRepository := repository.NewAnalyticsRepository(s.db)
+    analyticsService := service.NewAnalyticsService(analyticsRepository)
+    analyticsHandler := handler.NewAnalyticsHandler(analyticsService) 
 
     router.Route("/api/v1", func(router chi.Router) { 
-        router.Route("/users", func(router chi.Router) {
-            router.Get("/", userHandler.HandleGetAllUsers)
+        router.Route("/analytics", func(router chi.Router) {
+            router.Get("/", analyticsHandler.HandleGetAnalytics)
         })
     })
 
