@@ -24,7 +24,7 @@ func main() {
         log.Fatal(err)
     }
 
-    server := jumystap.NewAPIServer(":8090", db)
+    server := jumystap.NewAPIServer(config.Envs.Port, db)
 
 	if err := server.Run(); err != nil {
 		log.Fatal(err)
