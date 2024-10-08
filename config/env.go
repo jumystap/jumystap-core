@@ -27,7 +27,7 @@ func iniConfig() Config {
         DBUser: getEnv("DB_USER", "bizzar"),
         DBPassword: getEnv("DB_PASSWORD", "password"),
         DBAddress: fmt.Sprintf("%s:%s", getEnv("DB_HOST", "127.0.0.1"), getEnv("DB_PORT", "3306")),
-        DBName: getEnv("DB_NAME", "janabyte"),
+        DBName: getEnv("DB_NAME", "jumystap"),
     } 
 }
 
