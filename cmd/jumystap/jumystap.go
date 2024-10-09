@@ -44,6 +44,7 @@ func (s *APIServer) Run() error {
 			router.Get("/", analyticsHandler.HandleGetAnalytics)
 		})
         router.Post("/login", authHandler.HandleLogin)
+        router.Post("/register", authHandler.HandleRegister)
 	})
 
 	log.Print("Listening on", s.address)

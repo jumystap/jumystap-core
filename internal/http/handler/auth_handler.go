@@ -36,3 +36,7 @@ func (h *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
     utils.WriteJSON(w, http.StatusOK, response)
     return
 }
+
+func (h *AuthHandler) HandleRegister(w http.ResponseWriter, r *http.Request) {
+    return
+}
