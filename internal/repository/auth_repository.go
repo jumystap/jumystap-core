@@ -26,3 +26,18 @@ func (r *AuthRepository) GetUserByEmail (email string) (*model.User, error) {
 
     return user, nil
 }
+
+func (r *AuthRepository) StoreUser (user *model.User) (int, error) {
+    var id int
+    query := `
+        INSERT INTO users (name, role_id, email, phone, password, description) 
+        VALUES ( ?, 4, ?, ?, ?, 'admin')
+        RETURNING id;
+    `  
+    err := r.db.QueryRow(query, user.Name, user.Email, user.Phone, user.Password).Scan(&id)
+    if err != nil {
+        return 0, err
+    }
+    
+    return id, nil
+}

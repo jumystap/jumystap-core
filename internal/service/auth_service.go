@@ -21,15 +21,28 @@ func (s *AuthService) Login(email string, password string) (*model.User, error) 
     if err != nil {
         return nil, err
     }
-
-    hashedPassword, err := utils.HashUserPassword(password)
-    if err != nil {
-        return nil, err
-    }
     
-    if(hashedPassword == user.Password) {
+    if(utils.CheckPasswordHash(user.Password, password)) {
         return user, nil
     }
     
     return nil, fmt.Errorf("User with %s email not found", email)
+}
+
+func (s *AuthService) Register(user *model.User) (*model.User, error) {
+    hashedPassword, err := utils.HashUserPassword(user.Password) 
+    if err != nil {
+        return nil, err
+    }
+    
+    user.Password = hashedPassword
+
+    id, err := s.repo.StoreUser(user)
+    if err != nil {
+        return nil, err
+    }
+    
+    user.Id = id
+
+    return user, nil
 }

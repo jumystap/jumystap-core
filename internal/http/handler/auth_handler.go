@@ -38,5 +38,20 @@ func (h *AuthHandler) HandleLogin(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *AuthHandler) HandleRegister(w http.ResponseWriter, r *http.Request) {
+    var userRequest *model.User
+    if err := utils.ParseJSON(r, &userRequest); err != nil {
+        utils.WriteError(w, http.StatusBadRequest, err)
+    }
+    
+    user, err := h.service.Register(userRequest) 
+    if err != nil {
+        utils.WriteError(w, http.StatusBadRequest, err)
+    }
+
+    response := map[string]interface{}{
+        "user": user,
+    }
+
+    utils.WriteJSON(w, http.StatusOK, response)
     return
 }
