@@ -17,7 +17,11 @@ func NewAnalyticsHandler(service *service.AnalyticsService) *AnalyticsHandler {
 
 func (h *AnalyticsHandler) HandleGetAnalytics(w http.ResponseWriter, r *http.Request) {
     const op = "handler.HandleGetAnalytics"
-    analytics, err := h.service.GetAnalytics()
+    
+    startDate := r.URL.Query().Get("startDate")
+    endDate := r.URL.Query().Get("endDate")
+
+    analytics, err := h.service.GetAnalytics(startDate, endDate)
     if err != nil {
         utils.WriteError(w, http.StatusBadRequest, err)
     }

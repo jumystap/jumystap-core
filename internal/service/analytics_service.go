@@ -13,8 +13,9 @@ func NewAnalyticsService(repo *repository.AnalyticsRepository) *AnalyticsService
     return &AnalyticsService{repo: repo}
 }
 
-func (s *AnalyticsService) GetAnalytics() (*model.Analytics, error) {
+func (s *AnalyticsService) GetAnalytics(startDate string, endDate string) (*model.Analytics, error) {
     analytics := &model.Analytics{}
+
     userCount, err := s.repo.GetCountOfUsers()
     if err != nil {
         return analytics, err
