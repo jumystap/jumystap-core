@@ -13,7 +13,7 @@ func NewAnalyticsRepository(db *sql.DB) *AnalyticsRepository {
 }
 
 func (r *AnalyticsRepository) GetCountOfUsers (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE DATE(created_at) >= ? AND DATE(created_at) < ?"
+    const query = "SELECT COUNT(*) FROM users WHERE DATE(created_at) >= ? AND DATE(created_at) <= ?"
 
     var count uint64
 
@@ -27,7 +27,7 @@ func (r *AnalyticsRepository) GetCountOfUsers (startDate string, endDate string)
 }
 
 func (r *AnalyticsRepository) GetCountOfGraduates (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 1 AND DATE(created_at) >= ? AND DATE(created_at) < ?"
+    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 1 AND DATE(created_at) >= ? AND DATE(created_at) <= ?"
 
     var count uint64
 
@@ -40,7 +40,7 @@ func (r *AnalyticsRepository) GetCountOfGraduates (startDate string, endDate str
 }
 
 func (r *AnalyticsRepository) GetCountOfNoneGraduates (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 0 AND DATE(created_at) >= ? AND DATE(created_at) < ?"
+    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 0 AND DATE(created_at) >= ? AND DATE(created_at) <= ?"
 
     var count uint64
 
@@ -53,7 +53,7 @@ func (r *AnalyticsRepository) GetCountOfNoneGraduates (startDate string, endDate
 }
 
 func (r *AnalyticsRepository) GetCountOfCompanies (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE role_id !=2 AND DATE(created_at) >= ? AND DATE(created_at) < ?"
+    const query = "SELECT COUNT(*) FROM users WHERE role_id !=2 AND DATE(created_at) >= ? AND DATE(created_at) <= ?"
 
     var count uint64
 
@@ -66,7 +66,7 @@ func (r *AnalyticsRepository) GetCountOfCompanies (startDate string, endDate str
 }
 
 func (r *AnalyticsRepository) GetCountOfAnnouncements (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM announcements WHERE DATE(created_at) >= ? AND DATE(created_at) < ?"
+    const query = "SELECT COUNT(*) FROM announcements WHERE DATE(created_at) >= ? AND DATE(created_at) <= ?"
 
     var count uint64
 
@@ -79,7 +79,7 @@ func (r *AnalyticsRepository) GetCountOfAnnouncements (startDate string, endDate
 }
 
 func (r *AnalyticsRepository) GetCountOfResponses (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM responses WHERE DATE(created_at) >= ? AND DATE(created_at) < ?"
+    const query = "SELECT COUNT(*) FROM responses WHERE DATE(created_at) >= ? AND DATE(created_at) <= ?"
 
     var count uint64
 
