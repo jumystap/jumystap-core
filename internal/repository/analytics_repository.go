@@ -1,6 +1,8 @@
 package repository
 
-import "database/sql"
+import (
+	"database/sql"
+)
 
 type AnalyticsRepository struct {
     db *sql.DB
@@ -11,7 +13,21 @@ func NewAnalyticsRepository(db *sql.DB) *AnalyticsRepository {
 }
 
 func (r *AnalyticsRepository) GetCountOfUsers (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE DATE(created_at) >= ? AND DATE(created_at) <= ?"
+    const query = "SELECT COUNT(*) FROM users WHERE DATE(created_at) >= ? AND DATE(created_at) < ?"
+
+    var count uint64
+
+    err := r.db.QueryRow(query, startDate, endDate).Scan(&count)
+
+    if err != nil {
+        return 0, err
+    }
+
+    return count, nil
+}
+
+func (r *AnalyticsRepository) GetCountOfGraduates (startDate string, endDate string) (uint64, error) {
+    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 1 AND DATE(created_at) >= ? AND DATE(created_at) < ?"
 
     var count uint64
 
@@ -23,25 +39,12 @@ func (r *AnalyticsRepository) GetCountOfUsers (startDate string, endDate string)
     return count, nil
 }
 
-func (r *AnalyticsRepository) GetCountOfGraduates (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 1"
-
-    var count uint64
-
-    err := r.db.QueryRow(query).Scan(&count)
-    if err != nil {
-        return 0, err
-    }
-
-    return count, nil
-}
-
 func (r *AnalyticsRepository) GetCountOfNoneGraduates (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 0"
+    const query = "SELECT COUNT(*) FROM users WHERE role_id=2 AND is_graduate = 0 AND DATE(created_at) >= ? AND DATE(created_at) < ?"
 
     var count uint64
 
-    err := r.db.QueryRow(query).Scan(&count)
+    err := r.db.QueryRow(query, startDate, endDate).Scan(&count)
     if err != nil {
         return 0, err
     }
@@ -50,11 +53,11 @@ func (r *AnalyticsRepository) GetCountOfNoneGraduates (startDate string, endDate
 }
 
 func (r *AnalyticsRepository) GetCountOfCompanies (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM users WHERE role_id !=2"
+    const query = "SELECT COUNT(*) FROM users WHERE role_id !=2 AND DATE(created_at) >= ? AND DATE(created_at) < ?"
 
     var count uint64
 
-    err := r.db.QueryRow(query).Scan(&count)
+    err := r.db.QueryRow(query, startDate, endDate).Scan(&count)
     if err != nil {
         return 0, err
     }
@@ -63,11 +66,11 @@ func (r *AnalyticsRepository) GetCountOfCompanies (startDate string, endDate str
 }
 
 func (r *AnalyticsRepository) GetCountOfAnnouncements (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM announcements"
+    const query = "SELECT COUNT(*) FROM announcements WHERE DATE(created_at) >= ? AND DATE(created_at) < ?"
 
     var count uint64
 
-    err := r.db.QueryRow(query).Scan(&count)
+    err := r.db.QueryRow(query, startDate, endDate).Scan(&count)
     if err != nil {
         return 0, err
     }
@@ -76,11 +79,11 @@ func (r *AnalyticsRepository) GetCountOfAnnouncements (startDate string, endDate
 }
 
 func (r *AnalyticsRepository) GetCountOfResponses (startDate string, endDate string) (uint64, error) {
-    const query = "SELECT COUNT(*) FROM responses"
+    const query = "SELECT COUNT(*) FROM responses WHERE DATE(created_at) >= ? AND DATE(created_at) < ?"
 
     var count uint64
 
-    err := r.db.QueryRow(query).Scan(&count)
+    err := r.db.QueryRow(query, startDate, endDate).Scan(&count)
     if err != nil {
         return 0, err
     }
@@ -90,13 +93,18 @@ func (r *AnalyticsRepository) GetCountOfResponses (startDate string, endDate str
 
 func (r *AnalyticsRepository) GetCountOfEmployeesResponded (startDate string, endDate string) (uint64, error) {
     const query = ` SELECT COUNT(*) 
-                    FROM (SELECT employee_id FROM responses GROUP BY employee_id) 
+                    FROM (
+                        SELECT employee_id 
+                        FROM responses 
+                        WHERE DATE(created_at) >= ? AND DATE(created_at) <= ? 
+                        GROUP BY employee_id
+                    ) 
                     AS grouped_responses
                     `
 
     var count uint64
 
-    err := r.db.QueryRow(query).Scan(&count)
+    err := r.db.QueryRow(query, startDate, endDate).Scan(&count)
     if err != nil {
         return 0, err
     }
@@ -106,13 +114,18 @@ func (r *AnalyticsRepository) GetCountOfEmployeesResponded (startDate string, en
 
 func (r *AnalyticsRepository) GetCountOfCompaniesResponded (startDate string, endDate string) (uint64, error) {
     const query = ` SELECT COUNT(*) 
-                    FROM (SELECT announcement_id FROM responses GROUP BY announcement_id) 
+                    FROM (
+                        SELECT announcement_id 
+                        FROM responses 
+                        WHERE DATE(created_at) >= ? AND DATE(created_at) <= ? 
+                        GROUP BY announcement_id
+                    ) 
                     AS grouped_responses
                     `
 
     var count uint64
 
-    err := r.db.QueryRow(query).Scan(&count)
+    err := r.db.QueryRow(query, startDate, endDate).Scan(&count)
     if err != nil {
         return 0, err
     }

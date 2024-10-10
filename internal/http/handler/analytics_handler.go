@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/jumystap/jumystap-core/internal/service"
@@ -18,8 +19,10 @@ func NewAnalyticsHandler(service *service.AnalyticsService) *AnalyticsHandler {
 func (h *AnalyticsHandler) HandleGetAnalytics(w http.ResponseWriter, r *http.Request) {
     const op = "handler.HandleGetAnalytics"
     
-    startDate := r.URL.Query().Get("startDate")
-    endDate := r.URL.Query().Get("endDate")
+    startDate := r.URL.Query().Get("start_date")
+    endDate := r.URL.Query().Get("end_date")
+    log.Print(endDate)
+    log.Print(startDate)
 
     analytics, err := h.service.GetAnalytics(startDate, endDate)
     if err != nil {
