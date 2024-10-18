@@ -39,12 +39,22 @@ func (s *APIServer) Run() error {
     authService := service.NewAuthService(authRepository)
     authHandler := handler.NewAuthHandler(authService)
 
+    messageRepository := repository.NewMessageRepository(s.db)
+    webSocketHandler := handler.NewWebSocketHandler(messageRepository)
+    chatHandler := handler.NewChatHandler(messageRepository)
+
+    go webSocketHandler.StartBroadcast()
+
 	router.Route("/api/v1", func(router chi.Router) {
 		router.Route("/analytics", func(router chi.Router) {
 			router.Get("/", analyticsHandler.HandleGetAnalytics)
 		})
         router.Post("/login", authHandler.HandleLogin)
         router.Post("/register", authHandler.HandleRegister)
+
+        router.Get("/ws", webSocketHandler.HandleWebSocket)
+        router.Get("/chats", chatHandler.HandleGetChats) // Get chats
+	    router.Get("/messages", chatHandler.HandleGetMessages)
 	})
 
 	log.Print("Listening on", s.address)
