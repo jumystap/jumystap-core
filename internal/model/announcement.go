@@ -1,6 +1,9 @@
 package model
 
-import "database/sql"
+import (
+	"database/sql"
+	"time"
+)
 
 type Announcement struct {
     Id          string          `json:"id"`
@@ -15,4 +18,5 @@ type Announcement struct {
     WorkTime    sql.NullString  `json:"work_time"`
     WorkHours   sql.NullString  `json:"work_hours"`
     City        string          `json:"city"`
+    CreatedAt   time.Time       `json:"created_at"`
 }

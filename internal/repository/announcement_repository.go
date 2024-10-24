@@ -19,8 +19,9 @@ func (r *AnnouncementRepository) GetAllAnnouncements(offset int) ([]*model.Annou
     announcements := []*model.Announcement{}
 
     rows, err := r.db.Query(`
-            SELECT id, title, description, cost, cost_min, cost_max, city, work_time, work_hours, salary_type, education, experience
+            SELECT id, title, description, cost, cost_min, cost_max, city, work_time, work_hours, salary_type, education, experience, created_at
 			FROM announcements
+            ORDER BY created_at DESC
             LIMIT 10 OFFSET ?
     `, offset)
 	if err != nil {
@@ -54,6 +55,7 @@ func scanRowIntoAnnouncement(rows *sql.Rows) (*model.Announcement, error) {
 		&announcement.SalaryType,
 		&announcement.Education,
 		&announcement.Experience,
+		&announcement.CreatedAt,
 	)
 	if err != nil {
 		return nil, err
