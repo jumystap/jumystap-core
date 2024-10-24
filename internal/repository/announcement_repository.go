@@ -15,13 +15,14 @@ func NewAnnouncementRepository (db *sql.DB) *AnnouncementRepository {
     return &AnnouncementRepository{db: db}
 }
 
-func (r *AnnouncementRepository) GetAllAnnouncements() ([]*model.Announcement, error) {
+func (r *AnnouncementRepository) GetAllAnnouncements(offset int) ([]*model.Announcement, error) {
     announcements := []*model.Announcement{}
 
     rows, err := r.db.Query(`
             SELECT id, title, description, cost, cost_min, cost_max, city, work_time, work_hours, salary_type, education, experience
 			FROM announcements
-    `)
+            LIMIT 10 OFFSET ?
+    `, offset)
 	if err != nil {
 		return nil, fmt.Errorf("%s", err)
 	}

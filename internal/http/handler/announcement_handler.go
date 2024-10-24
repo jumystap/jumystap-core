@@ -16,7 +16,9 @@ func NewAnnouncementHandler (service *service.AnnouncementService) *Announcement
 }
 
 func (h *AnnouncementHandler) HandleGetAllAnnouncements (w http.ResponseWriter, r *http.Request) {
-    announcements, err := h.service.GetAllAnnouncements()
+    page := r.URL.Query().Get("page")
+    
+    announcements, err := h.service.GetAllAnnouncements(page)
 
     if err != nil {
         utils.WriteError(w, http.StatusBadRequest, err)
