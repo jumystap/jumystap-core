@@ -5,7 +5,7 @@ import "database/sql"
 type Announcement struct {
     Id          string          `json:"id"`
     Title       string          `json:"title"`
-    Description string          `json:"description"`
+    Description sql.NullString  `json:"description"`
     Cost        interface{}     `json:"cost"`
     CostMin     interface{}     `json:"cost_min"`
     CostMax     interface{}     `json:"cost_max"`
