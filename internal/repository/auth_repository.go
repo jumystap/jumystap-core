@@ -30,11 +30,11 @@ func (r *AuthRepository) GetUserByEmail (email string) (*model.User, error) {
 func (r *AuthRepository) StoreUser (user *model.User) (int, error) {
     var id int
     query := `
-        INSERT INTO users (name, role_id, email, phone, password, description) 
-        VALUES ( ?, 4, ?, ?, ?, 'admin')
+        INSERT INTO users (name, role_id, email, phone, password, description, gender, date_of_birth) 
+        VALUES ( ?, 2, ?, ?, ?, 'Соискатель', ?, ?)
         RETURNING id;
     `  
-    err := r.db.QueryRow(query, user.Name, user.Email, user.Phone, user.Password).Scan(&id)
+    err := r.db.QueryRow(query, user.Name, user.Email, user.Phone, user.Password, user.Gender, user.DateOfBirth).Scan(&id)
     if err != nil {
         return 0, err
     }

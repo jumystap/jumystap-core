@@ -39,6 +39,10 @@ func (s *APIServer) Run() error {
     authService := service.NewAuthService(authRepository)
     authHandler := handler.NewAuthHandler(authService)
 
+    announcementRepository := repository.NewAnnouncementRepository(s.db)
+    announcementService := service.NewAnnouncementService(announcementRepository)
+    announcementHandler := handler.NewAnnouncementHandler(announcementService)
+
     messageRepository := repository.NewMessageRepository(s.db)
     webSocketHandler := handler.NewWebSocketHandler(messageRepository)
     chatHandler := handler.NewChatHandler(messageRepository)
@@ -48,6 +52,9 @@ func (s *APIServer) Run() error {
 	router.Route("/api/v1", func(router chi.Router) {
 		router.Route("/analytics", func(router chi.Router) {
 			router.Get("/", analyticsHandler.HandleGetAnalytics)
+		})
+        router.Route("/announcement", func(router chi.Router) {
+			router.Get("/", announcementHandler.HandleGetAllAnnouncements)
 		})
         router.Post("/login", authHandler.HandleLogin)
         router.Post("/register", authHandler.HandleRegister)
