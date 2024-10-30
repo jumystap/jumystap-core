@@ -39,25 +39,31 @@ func NewWebSocketHandler(messageRepo *repository.MessageRepository) *WebSocketHa
 
 // HandleWebSocket upgrades the HTTP connection to a WebSocket connection
 func (h *WebSocketHandler) HandleWebSocket(w http.ResponseWriter, r *http.Request) {
-	conn, err := h.upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Failed to upgrade WebSocket connection:", err)
-		return
-	}
+    log.Printf("WebSocket connection attempt from: %s, URL: %s", r.RemoteAddr, r.URL.String())
 
-	userIdStr := r.URL.Query().Get("user_id")
-	userId, err := strconv.ParseInt(userIdStr, 10, 64)
-	if err != nil {
-		log.Println("Invalid user ID:", err)
-		return
-	}
+    conn, err := h.upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Println("Failed to upgrade WebSocket connection:", err)
+        http.Error(w, "Failed to upgrade connection", http.StatusInternalServerError)
+        return
+    }
 
-	client := &Client{conn: conn, send: make(chan []byte), userId: userId}
-	h.clients[client] = true
+    userIdStr := r.URL.Query().Get("user_id")
+    userId, err := strconv.ParseInt(userIdStr, 10, 64)
+    if err != nil || userId <= 0 {
+        log.Println("Invalid user ID:", userIdStr)
+        http.Error(w, "Invalid user ID", http.StatusBadRequest)
+        return
+    }
 
-	// Start reading and writing messages for the client
-	go h.readMessages(client)
-	go h.writeMessages(client)
+    client := &Client{conn: conn, send: make(chan []byte), userId: userId}
+    h.clients[client] = true
+
+    // Start reading and writing messages for the client
+    go h.readMessages(client)
+    go h.writeMessages(client)
+
+    log.Printf("Client connected: user_id=%d", userId)
 }
 
 // readMessages continuously reads messages from the client
