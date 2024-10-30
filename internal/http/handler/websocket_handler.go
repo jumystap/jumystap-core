@@ -80,6 +80,9 @@ func (h *WebSocketHandler) readMessages(client *Client) {
 			break
 		}
 
+		// Log the received message
+		log.Printf("Received message from user_id=%d: %s", client.userId, string(message))
+
 		// Unmarshal the message into a structured format
 		var msgData struct {
 			SenderId   int64  `json:"sender_id"`
@@ -100,6 +103,7 @@ func (h *WebSocketHandler) readMessages(client *Client) {
 		}
 
 		// Broadcast the message to all clients
+		log.Printf("Broadcasting message: %s", string(message)) // Log before broadcasting
 		h.broadcast <- message
 	}
 }
@@ -113,6 +117,7 @@ func (h *WebSocketHandler) writeMessages(client *Client) {
 			delete(h.clients, client)
 			break
 		}
+		log.Printf("Sending message to user_id=%d", client.userId) // Log when a message is sent to a client
 	}
 }
 
@@ -123,6 +128,7 @@ func (h *WebSocketHandler) StartBroadcast() {
 		for client := range h.clients {
 			select {
 			case client.send <- message:
+				log.Printf("Sending message to user_id=%d", client.userId) // Log when a message is sent to a client
 			default:
 				close(client.send)
 				delete(h.clients, client)
@@ -130,4 +136,3 @@ func (h *WebSocketHandler) StartBroadcast() {
 		}
 	}
 }
-
